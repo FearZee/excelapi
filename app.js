@@ -43,7 +43,9 @@ app.post('/upload-file', async (req, res) => {
             let excel = req.files.excel;
 
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            excel.mv('./uploads/' + excel.name);
+            await excel.mv('./uploads/' + excel.name);
+
+            await getAndReadFile(excel.name)
 
             //send response
             res.send({
@@ -62,19 +64,18 @@ app.post('/upload-file', async (req, res) => {
 });
 
 
-function getAndReadFile(){
+function getAndReadFile(test){
     fs.readdir(testFolder, (err, files) => {
         files.forEach(file => {
-            console.log(file)
-            let workbook = XLSX.readFile(`${testFolder}${file}`);
-            let sheet_name_list = workbook.SheetNames;
-            let xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
-            exelcontent = xlData
-            console.log(exelcontent)
+            if(test === file){
+                let workbook = XLSX.readFile(`${testFolder}${file}`);
+                let sheet_name_list = workbook.SheetNames;
+                let xlData = XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+                exelcontent = xlData
+                console.log(exelcontent)
+            }
         });
     });
 }
-
-getAndReadFile()
 
 
